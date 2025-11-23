@@ -6,14 +6,14 @@ WORKDIR /opt/server
 COPY pom.xml .
 COPY src ./src
 
-# Build application and create JAR
+# Build application
 RUN mvn clean package -DskipTests
 
 ### Stage 2: Runtime ###
-FROM openjdk:17
+FROM eclipse-temurin:17-jre
 WORKDIR /opt/server
 
-# Copy the JAR from build stage
+# Copy built JAR from stage 1
 COPY --from=build /opt/server/target/shipping-1.0.jar shipping.jar
 
 EXPOSE 8080
@@ -21,5 +21,4 @@ EXPOSE 8080
 ENV CART_ENDPOINT="cart:8080" \
     DB_HOST="mysql"
 
-# Run the app
 CMD ["java", "-jar", "shipping.jar"]
